@@ -32,6 +32,10 @@ AChecker.output = AChecker.output || {};
         "AC_by_paste": {
             menuID: "AC_menu_by_paste",
             spinnerID: "AC_spinner_by_paste"
+        },
+        "AC_from_totalvalidator": {
+            menuID: "AC_menu_from_totalvalidator",
+            spinnerID: "AC_spinner_from_totalvalidator"
         }
     };
 

@@ -113,6 +113,7 @@ function get_guideline_div($guideline_rows, $num_of_guidelines_per_row, $format 
 				<li class="navigation"><a href="javascript:void(0)" accesskey="a" title="<?php echo _AC("check_by_uri"); ?> Alt+1" id="AC_menu_by_uri" onclick="return AChecker.input.onClickTab('AC_by_uri');" <?php if (!isset($_POST["validate_paste"]) && !isset($_POST["validate_file"])) echo 'class="active"'; ?>><span class="nav"><?php echo _AC("check_by_uri"); ?></span></a></li>
 				<li class="navigation"><a href="javascript:void(0)" accesskey="b" title="<?php echo _AC("check_by_upload"); ?> Alt+2" id="AC_menu_by_upload" onclick="return AChecker.input.onClickTab('AC_by_upload');" <?php if (isset($_POST["validate_file"])) echo 'class="active"'; ?>><span class="nav"><?php echo _AC("check_by_upload"); ?></span></a></li>
 				<li class="navigation"><a href="javascript:void(0)" accesskey="c" title="<?php echo _AC("check_by_paste"); ?> Alt+3" id="AC_menu_by_paste" onclick="return AChecker.input.onClickTab('AC_by_paste');" <?php if (isset($_POST["validate_paste"])) echo 'class="active"'; ?>><span class="nav"><?php echo _AC("check_by_paste"); ?></span></a></li>
+				<li class="navigation"><a href="javascript:void(0)" accesskey="c" title="From TotalValidator Alt+4" id="AC_menu_from_totalvalidator" onclick="return AChecker.input.onClickTab('AC_from_totalvalidator');" <?php if (isset($_POST["validate_tv"])) echo 'class="active"'; ?>><span class="nav">From TotalValidator</span></a></li>
 			</ul>
 		</div>
 		
@@ -157,6 +158,22 @@ function get_guideline_div($guideline_rows, $num_of_guidelines_per_row, $format 
 						&nbsp;
 					</div>
 					<input class="validation_button" type="submit" name="validate_paste" id="validate_paste" value="<?php echo _AC("check_it"); ?>" onclick="return AChecker.input.validatePaste();" />
+				</div>
+			</div>
+		</div>
+		
+		<div id="AC_from_totalvalidator" class="input_tab" style="<?php if (isset($_POST["validate_tv"])) echo "display:block"; else echo "display:none"; ?>">
+			<div style="text-align:center;">
+				<label for="checkfile"><?php echo _AC('file'); ?>:</label>
+				<input type="hidden" name="MAX_FILE_SIZE" value="52428800" />
+				<input type="file" id="checkfile" name="uploadfile" size="47" />
+			
+				<div class="validation_submit_div">
+					<div class="spinner_div">
+						<img class="spinner_img" id="AC_spinner_from_totalvalidator" style="display:none" src="<?php echo AC_BASE_HREF.'themes/'.$_SESSION['prefs']['PREF_THEME']; ?>/images/spinner.gif" alt="<?php echo _AC("in_progress"); ?>" />
+						&nbsp;
+					</div>
+					<input class="validation_button" type="submit" name="validate_file" id="validate_file" value="<?php echo _AC("check_it"); ?>" onclick="return AChecker.input.validateUpload();"  />
 				</div>
 			</div>
 		</div>

@@ -158,9 +158,10 @@ AChecker.output = AChecker.output || {};
     /**
      * Validates if a html file is provided
      */
-    AChecker.input.validateUpload = function () {
+    AChecker.input.validateUpload = function (fieldId) {
         // check file type
-        var upload_file = document.getElementById("checkfile").value;
+        fieldId = fieldId || 'checkfile';
+        var upload_file = document.getElementById(fieldId).value;
         if (!upload_file || upload_file.trim() === '') {
             alert(AChecker.lang.provide_html_file);
             return false;
@@ -185,6 +186,17 @@ AChecker.output = AChecker.output || {};
             return false;
         }
         disableClickablesAndShowSpinner(inputDivMapping.AC_by_paste.spinnerID);
+    };
+    
+    /**
+     * Validates file select menu, sends file & problem type to start_export.php,
+     * receives file's path and starts downloading
+     */
+    AChecker.input.downloadTV = function (exportSpinnerID) {
+        // change src and start downloading
+        var path = document.getElementById("zippath").value;
+        var ifrm = document.getElementById("downloadFrame");
+        ifrm.src = "checker/download_tv.php?path=" + path;
     };
     
     /**

@@ -24,7 +24,7 @@ global $starttime;
 $mtime = microtime(); 
 $mtime = explode(" ", $mtime); 
 $mtime = $mtime[1] + $mtime[0]; 
-$starttime = $mtime; 
+$starttime = $mtime;
 
 // input_form - array in session that contains latest user request (needed for file export)
 unset($_SESSION['input_form']); 
@@ -113,6 +113,8 @@ if (isset($_POST["enable_html_validation"])) {
 	$_SESSION['input_form']['enable_html_validation'] = true;
 }
 
+include(AC_INCLUDE_PATH. "classes/TVParser.class.php");
+
 if (!is_array($_gids)) { // $_gids hasn't been set at validating referer URIs
 	if ($_POST["rpt_format"] == REPORT_FORMAT_GUIDELINE) {
 		$_gids = $_POST["radio_gid"];
@@ -192,6 +194,22 @@ if ($_POST["validate_paste"])
 		$source_array = preg_split("/(?:\r\n?|\n)/", $validate_content);
 }
 
+if ($_POST["validate_tv"])
+{
+	$allowed_file_extensions = ["html", "htm"];
+
+	if (!Utility::is_extension_in_list($_FILES['uploadtv']['name'], $allowed_file_extensions)) {
+		$msg->addError(array('ALLOWED_FILE_TYPES', implode(", ", $allowed_file_extensions)));
+	}
+
+	if (!$msg->containsErrors()) {
+		$validate_content = file_get_contents($_FILES['uploadtv']['tmp_name']);
+		$_SESSION['input_form']['tv'] = $validate_content;
+		$TVParser = new TVParser($validate_content);
+		$tvResults = $TVParser->execute(isset($_POST["enable_html_validation"]), isset($_POST["enable_css_validation"]), isset($_POST["show_source"]));
+	}
+}
+
 if ($_POST["validate_content"] && $_POST["validate_content"] <> '')
 {
 	$validate_content = $_POST["validate_content"];
@@ -241,7 +259,21 @@ if ($msg->containsErrors()) {
 include ("checker_input_form.php");
 
 // display validation results
-if (!$has_errors && (isset($aValidator) || isset($htmlValidator)))
+if (isset($tvResults)) {
+	// Save the summary in index.html (in the report subfolder)
+    ob_end_flush();
+    ob_start();
+    include AC_INCLUDE_PATH . "header.inc.php";
+    include "tv_results.php";
+    include AC_INCLUDE_PATH . "footer.inc.php";
+    $buffer = ob_get_contents();
+    ob_end_clean();
+    file_put_contents($TVParser->path . 'index.html', $buffer);
+
+    $zippath = $TVParser->zip();
+
+	include ("tv_results.php");
+} elseif (!$has_errors && (isset($aValidator) || isset($htmlValidator)))
 {
 	include ("checker_results.php");
 }

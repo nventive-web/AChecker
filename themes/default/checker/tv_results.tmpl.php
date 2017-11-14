@@ -66,7 +66,7 @@ if ($has_errors) {
         ?>
             <div class="gd_one_check"> 
                 <span class="gd_msg">
-                    <a href="<?php echo $result->url; ?>" target="_blank"><?php echo $result['url']; ?></a>
+                    <a href="<?php echo ($this->tvstatic) ? 'pages/' . basename($result['report']) : AC_BASE_HREF . 'checker/tv_report.php?path=' . str_ireplace(AC_TEMP_DIR, '', $result['report']); ?>" target="_blank"><?php echo $result['url']; ?></a>
                 </span>
 
                 <div class="gd_question_section" style="margin-top: 0;">

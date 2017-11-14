@@ -63,6 +63,7 @@ $savant->assign('lang_code', $_SESSION['lang']);
 $savant->assign('lang_charset', $myLang->getCharacterSet());
 $savant->assign('base_path', AC_BASE_HREF);
 $savant->assign('theme', $_SESSION['prefs']['PREF_THEME']);
+$savant->assign('exclude_base_href', (isset($tvstatic) && $tvstatic));
 
 $theme_img  = $_base_path . 'themes/'. $_SESSION['prefs']['PREF_THEME'] . '/images/';
 $savant->assign('img', $theme_img);

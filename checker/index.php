@@ -19,6 +19,7 @@ include_once(AC_INCLUDE_PATH. 'classes/DAO/GuidelinesDAO.class.php');
 include_once(AC_INCLUDE_PATH. 'classes/DAO/ChecksDAO.class.php');
 include_once(AC_INCLUDE_PATH. 'classes/DAO/UserLinksDAO.class.php');
 include_once(AC_INCLUDE_PATH. 'classes/Decision.class.php');
+include_once(AC_INCLUDE_PATH. 'classes/Standalone.class.php');
 
 global $starttime;
 $mtime = microtime(); 
@@ -263,6 +264,7 @@ if (isset($tvResults)) {
 	// Save the summary in index.html (in the report subfolder)
     ob_end_flush();
     ob_start();
+    $tvstatic = true;
     include AC_INCLUDE_PATH . "header.inc.php";
     include "tv_results.php";
     include AC_INCLUDE_PATH . "footer.inc.php";
@@ -270,8 +272,16 @@ if (isset($tvResults)) {
     ob_end_clean();
     file_put_contents($TVParser->path . 'index.html', $buffer);
 
+    // Transform the exported HTML to be static
+    $standalone = new Standalone();
+    $standalone->baseUrl = AC_BASE_HREF;
+    $standalone->ignoreMissingFiles = true;
+    $staticHtml = $standalone->process(AC_BASE_HREF . 'checker/tv_report.php?path=' . str_ireplace(AC_TEMP_DIR, '', $TVParser->path . 'index.html'));
+    file_put_contents($TVParser->path . 'index.html', $staticHtml);
+
     $zippath = $TVParser->zip();
 
+    $tvstatic = false;
 	include ("tv_results.php");
 } elseif (!$has_errors && (isset($aValidator) || isset($htmlValidator)))
 {

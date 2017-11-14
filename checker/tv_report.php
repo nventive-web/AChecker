@@ -11,16 +11,26 @@
 /************************************************************************/
 // $Id$
 
-if (!defined("AC_INCLUDE_PATH")) die("Error: AC_INCLUDE_PATH is not defined in checker_input_form.php.");
+define('AC_INCLUDE_PATH', '../include/');
 
-if (!isset($tvResults) || !isset($TVParser)) die(_AC("no_instance"));
+include(AC_INCLUDE_PATH.'vitals.inc.php');
+include_once(AC_INCLUDE_PATH. 'classes/Utility.class.php');
+include_once(AC_INCLUDE_PATH. 'classes/DAO/GuidelinesDAO.class.php');
+include_once(AC_INCLUDE_PATH. 'classes/DAO/ChecksDAO.class.php');
+include_once(AC_INCLUDE_PATH. 'classes/DAO/UserLinksDAO.class.php');
+include_once(AC_INCLUDE_PATH. 'classes/Decision.class.php');
 
-$total = $TVParser->getNumOfValidateError();
+global $starttime;
+$mtime = microtime(); 
+$mtime = explode(" ", $mtime); 
+$mtime = $mtime[1] + $mtime[0]; 
+$starttime = $mtime;
 
-$savant->assign('tvstatic', $tvstatic);
-$savant->assign('results', $tvResults);
-$savant->assign('total_errors', $total);
-$savant->assign('zippath', $zippath);
+if (!isset($_GET['path'])) {
+	die('No report specified.');
+}
 
-$savant->display('checker/tv_results.tmpl.php');
+$path = str_replace('..', '', $_GET['path']);
+include AC_TEMP_DIR . $path;
+
 ?>

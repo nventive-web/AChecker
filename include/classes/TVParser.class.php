@@ -3,18 +3,25 @@
 // include_once AC_INCLUDE_PATH. 'classes/Utility.class.php';
 // include_once AC_INCLUDE_PATH. "classes/HTMLValidator.class.php";
 include_once AC_INCLUDE_PATH. "classes/AccessibilityValidator.class.php";
+include_once AC_INCLUDE_PATH. "classes/Standalone.class.php";
 
 class TVParser
 {
     public $path;
 
+    protected $standalone;
     protected $timestamp;
     protected $urls = array();
     protected $checks = false;
     protected $total = 0;
 
+    protected $count = 0;
+
     public function __construct($TVReportSrc)
     {
+        $this->standalone = new Standalone();
+        $this->standalone->baseUrl = AC_BASE_HREF;
+        $this->standalone->ignoreMissingFiles = true;
         $this->timestamp = time();
         $this->path = AC_TEMP_DIR . 'TV' . $this->timestamp . '/';
 
@@ -131,6 +138,10 @@ class TVParser
             $data['report'] = $filepath;
             $result[] = $data;
 
+            if (++$this->count >= 3) {
+                return $result;
+            }
+
             usleep(250 * 1000); // 250 milliseconds
         }
 
@@ -223,12 +234,16 @@ class TVParser
         ob_end_flush();
         ob_start();
         include AC_INCLUDE_PATH . "header.inc.php";
-        include AC_INCLUDE_PATH . "classes/checker_results.php";
+        include AC_INCLUDE_PATH . "../checker/checker_results.php";
         include AC_INCLUDE_PATH . "footer.inc.php";
         $buffer = ob_get_contents();
         ob_end_clean();
         $file = $this->path . 'pages/page' . microtime() . '.html';
         file_put_contents($file, $buffer);
+
+        // Transform the exported HTML to be static
+        $staticHtml = $this->standalone->process(AC_BASE_HREF . 'checker/tv_report.php?path=' . str_ireplace(AC_TEMP_DIR, '', $file));
+        file_put_contents($file, $staticHtml);
 
         return $file;
     }
